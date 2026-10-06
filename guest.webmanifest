@@ -1,9 +1,9 @@
 {
-  "id": "./",
-  "name": "我们家的慢慢成长",
-  "short_name": "我们家",
+  "id": "./guest.html",
+  "name": "访客听书馆",
+  "short_name": "访客听书",
   "lang": "zh-CN",
-  "start_url": "./",
+  "start_url": "./guest.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f7f1e8",
