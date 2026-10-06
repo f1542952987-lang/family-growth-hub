@@ -1,12 +1,16 @@
 window.FamilyHubRoleRecommendations=(function(){
 var picks={
-dad:[['做一个好爸爸好丈夫','先从家庭角色与陪伴开始'],['怎么和妻子好好说话','减少争执，提高伴侣沟通质量'],['中年男性健康管理','睡眠、血压、体检和长期体力'],['少一点烟酒，多一点健康','把健康目标拆成可执行的小动作']],
-mom:[['做妈妈，也做自己','先把自己的身体、兴趣和生活重新放回日程'],['怎么和丈夫好好沟通','把委屈转成具体问题和具体请求'],['家常饮食与健康生活','把健康真正落到每天三餐'],['煲汤与营养的正确打开方式','少迷信“补”，多看整体营养']],
-bro:[['学习和玩怎么平衡','先建立自由和责任并存的时间系统'],['把青少年生活变丰富','让生活不只剩学校和手机'],['怎么和父母正确沟通','练习边界、计划和可靠感'],['青春萌动与喜欢一个人','理解喜欢、拒绝、同意和安全']],
-me:[['职场成长：从执行到分析','优先把工作经验转成分析能力和职业资产'],['20几岁女生的AI学习路线','把AI接进真实学习与工作流'],['专注力与高效学习','减少计划很多、实际启动困难'],['情商、表达与自信','把能力更清楚地表达出来'],['减少内耗与情绪困扰','降低反刍，把注意力拉回可控行动'],['20几岁：丰富自己的人生','让工作之外也有稳定支点']]
+dad:[['怎么和妻子好好说话','夫妻沟通先行'],['少一点烟酒，多一点健康','健康风险先做小改变'],['金钱心理学','家庭储蓄与长期选择'],['50岁以后继续成长','中后半生健康、关系和养老']],
+mom:[['做妈妈，也做自己','先把自己重新放回生活'],['怎么和丈夫好好沟通','把委屈变成具体请求'],['家常饮食与健康生活','把健康落到每天三餐'],['50岁以后继续成长','为后半生提前做准备']],
+bro:[['学习和玩怎么平衡','自由和责任一起增长'],['把青少年生活变丰富','生活不只剩学校和手机'],['青春萌动与喜欢一个人','喜欢、边界、拒绝和安全'],['解码青春期','理解自己正在发生的变化']],
+me:[['职场成长：从执行到分析','把一线经验变成分析能力'],['20几岁女生的AI学习路线','把AI接进真实工作流'],['专注力与高效学习','减少计划多、启动少'],['减少内耗与情绪困扰','把注意力拉回可控行动']]
 };
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function render(){var home=document.getElementById('home');if(!home||!window.FamilyHubStorage)return;var role=FamilyHubStorage.role(),list=picks[role]||[],old=document.getElementById('roleRecommendations');if(old)old.remove();var box=document.createElement('div');box.id='roleRecommendations';box.className='card';box.style.margin='12px 0';box.innerHTML='<h3>⭐ 今天优先听</h3><p class="muted">不是把所有课程同时摆在前面，而是按这个身份当前最值得先听的顺序推荐。</p><div class="grid">'+list.map(function(x){var t=x[0],d=x[1];return '<button class="card" onclick="show(\'library\');setTimeout(function(){var bs=[].slice.call(document.querySelectorAll(\'#books .card\'));var hit=bs.find(function(b){return b.querySelector(\'h3\')&&b.querySelector(\'h3\').textContent.indexOf('+JSON.stringify(t)+')>=0});if(hit){hit.scrollIntoView({behavior:\'smooth\',block:\'center\'});hit.style.outline=\'3px solid rgba(65,120,90,.35)\';setTimeout(function(){hit.style.outline=\'\'},1800)}},120)"><b>《'+esc(t)+'》</b><br><span class="muted">'+esc(d)+'</span></button>'}).join('')+'</div>';var resume=document.getElementById('resume');if(resume&&resume.parentNode===home)home.insertBefore(box,resume.nextSibling);else home.appendChild(box)}
-function wrapRole(){if(!window.setRole||window.setRole.__fhWrapped)return;var original=window.setRole;var wrapped=function(r){original(r);setTimeout(render,20)};wrapped.__fhWrapped=true;window.setRole=wrapped}
-window.addEventListener('load',function(){setTimeout(function(){wrapRole();render()},250)});return{render:render,picks:picks};
+function escHtml(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function escJs(s){return String(s).replaceAll("'","\\'")}
+function currentRole(){try{return FamilyHubStorage.role()}catch(e){return'me'}}
+function render(){var home=document.getElementById('home');if(!home)return;var role=currentRole(),list=picks[role]||[],old=document.getElementById('roleRecommendations');if(old)old.remove();var box=document.createElement('div');box.id='roleRecommendations';box.className='card';box.style.margin='12px 0';box.innerHTML='<h3>⭐ 今天优先听</h3><p class="muted">按这个身份最值得先听的顺序推荐。点一下直接从第1节连续播放。</p><div class="grid">'+list.map(function(x){return '<button class="card" onclick="playCourse(\''+escJs(x[0])+'\',0,\'long\')"><b>▶ 《'+escHtml(x[0])+'》</b><br><span class="muted">'+escHtml(x[1])+' · 🎙️重点精修</span></button>'}).join('')+'</div>';var resume=document.getElementById('resume');if(resume&&resume.parentNode===home)home.insertBefore(box,resume.nextSibling);else home.appendChild(box)}
+function reorder(){var books=document.getElementById('books');if(!books)return;var list=(picks[currentRole()]||[]).map(function(x){return x[0]}),cards=[].slice.call(books.children);cards.sort(function(a,b){function rank(c){var h=c.querySelector('h3'),t=h?h.textContent.replace(/[《》]/g,''):'';var i=list.indexOf(t);return i<0?999:i}return rank(a)-rank(b)});cards.forEach(function(c){books.appendChild(c)})}
+function refresh(){setTimeout(function(){render();reorder()},60)}
+function wrapRole(){if(!window.setRole||window.setRole.__fhWrapped)return;var original=window.setRole;var wrapped=function(r){original(r);refresh()};wrapped.__fhWrapped=true;window.setRole=wrapped}
+window.addEventListener('load',function(){setTimeout(function(){wrapRole();render();var books=document.getElementById('books');if(books)new MutationObserver(function(){reorder()}).observe(books,{childList:true});reorder()},250)});document.addEventListener('familyhub-depth-updated',refresh);return{render:render,reorder:reorder,picks:picks};
 })();
