@@ -6,7 +6,7 @@ function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function manual(){return load(MANUAL,{crossDevice:false})}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function bibleOk(){var b=load('familyHubBibleLastSuccess',null);return !!(b&&b.chars>80&&Date.now()-Number(b.at||0)<30*24*3600*1000)}
-function preciseOk(){try{var role=FamilyHubStorage.role(),s=FamilyHubStorage.load(),r=s&&s[role]&&s[role].resume;return !!(r&&r.course&&Number.isInteger(r.captionIndex)&&r.captionIndex>0&&r.updatedAt)}catch(e){return false}}
+function preciseOk(){try{var role=FamilyHubStorage.role(),s=FamilyHubStorage.load(),r=s&&s[role]&&s[role].resume;return !!(r&&r.verified&&r.course&&Number.isInteger(r.captionIndex)&&r.captionIndex>0&&r.updatedAt)}catch(e){return false}}
 function contentOk(){try{var s=FamilyHubDepthProgress.stats();return !!(s&&s.catalogCourses===s.courses&&s.remaining===0&&s.priorityRemaining===0&&!s.missing.length)}catch(e){return false}}
 function cloudOk(){try{var exp=Number(localStorage.getItem('familyHubSupabaseExpiresAt')||0),hasRefresh=!!localStorage.getItem('familyHubSupabaseRefreshToken');return FamilyHubCloud.status().mode==='cloud'&&!!localStorage.getItem('familyHubLockedRole')&&(hasRefresh||!exp||exp>Date.now()/1000)}catch(e){return false}}
 function longPlayOk(){try{var x=FamilyHubPlaybackHealth.read(),v=FamilyHubPlaybackHealth.verdict(x.diag,x.health);return v.cls===''&&Number(x.health.runtimeMs||0)>=20*60000&&Number(x.health.segmentsStarted||0)>=80}catch(e){return false}}
