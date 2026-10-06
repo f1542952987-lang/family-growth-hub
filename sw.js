@@ -1,4 +1,4 @@
-const CACHE='family-hub-v17-34';
+const CACHE='family-hub-v17-35';
 const CORE=['./','./index.html','./v17.html','./guest.html','./manifest.webmanifest','./assets/css/app.css'];
 self.addEventListener('install',event=>{
   self.skipWaiting();
@@ -23,6 +23,11 @@ self.addEventListener('fetch',event=>{
         caches.open(CACHE).then(cache=>cache.put(req,copy)).catch(()=>{});
       }
       return res;
-    }).catch(()=>caches.match(req).then(hit=>hit||caches.match('./v17.html')))
+    }).catch(async()=>{
+      const hit=await caches.match(req);
+      if(hit)return hit;
+      if(req.mode==='navigate')return (await caches.match('./v17.html')) || Response.error();
+      return Response.error();
+    })
   );
 });
