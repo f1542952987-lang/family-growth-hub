@@ -1,1 +1,1 @@
-window.FAMILY_HUB_CLOUD_CONFIG={provider:'supabase',enabled:false,setupStage:'project-not-created',url:'',anonKey:'',familyId:'family-main',postsTable:'family_posts',progressTable:'family_progress',mediaBucket:'family-media'};
+window.FAMILY_HUB_CLOUD_CONFIG={provider:'supabase',enabled:true,setupStage:'project-active',url:'https://gsgaqjhtxrevyrbvmnsc.supabase.co',anonKey:'sb_publishable_oT4oLtvv92YI0GfzumPisw_tXn8kPJQ',familyId:'family-main',postsTable:'family_posts',progressTable:'family_progress',mediaBucket:'family-media'};
