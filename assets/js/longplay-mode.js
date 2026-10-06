@@ -1,0 +1,8 @@
+window.FamilyHubLongPlay=(function(){
+var lock=null,enabled=false,btn=null;
+function update(){if(!btn)return;btn.textContent=enabled?'🔆 长播模式已开':'🔅 长播模式';btn.title=enabled?'保持屏幕唤醒，降低长时间TTS被系统暂停的概率。再次点击关闭。':'长时间戴耳机收听时可开启。'}
+async function acquire(){if(!enabled||!('wakeLock' in navigator)||document.visibilityState!=='visible')return;try{lock=await navigator.wakeLock.request('screen');lock.addEventListener('release',function(){lock=null;if(enabled&&document.visibilityState==='visible')setTimeout(acquire,500)})}catch(e){console.warn('wake lock unavailable',e)}}
+async function toggle(){if(!('wakeLock' in navigator)){alert('当前浏览器不支持长播唤醒模式；播放器仍会自动尝试恢复TTS。');return}enabled=!enabled;if(enabled){await acquire()}else if(lock){try{await lock.release()}catch(e){}lock=null}try{localStorage.setItem('familyHubLongPlay',enabled?'1':'0')}catch(e){}update()}
+function mount(){var controls=document.querySelector('.player .controls');if(!controls||document.getElementById('longPlayBtn'))return;btn=document.createElement('button');btn.id='longPlayBtn';btn.type='button';btn.onclick=toggle;controls.appendChild(btn);try{enabled=localStorage.getItem('familyHubLongPlay')==='1'}catch(e){}update();if(enabled)acquire()}
+document.addEventListener('visibilitychange',function(){if(enabled&&document.visibilityState==='visible')acquire()});window.addEventListener('load',function(){setTimeout(mount,250)});return{toggle:toggle,mount:mount,status:function(){return{enabled:enabled,supported:'wakeLock' in navigator}}};
+})();
