@@ -1,0 +1,1 @@
+window.FAMILY_HUB_CLOUD_CONFIG={provider:'supabase',enabled:false,url:'',anonKey:'',familyId:'family-main',postsTable:'family_posts',progressTable:'family_progress',mediaBucket:'family-media'};
